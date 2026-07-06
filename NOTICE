@@ -1,0 +1,38 @@
+lib-tdlib-android
+=================
+
+This repository is a verbatim redistribution of prebuilt binaries; it builds
+nothing from source. It packages an Android AAR containing:
+
+  * org.drinkless.tdlib.{TdApi,Client}  - the generated TDLib Java API
+  * jniLibs/<abi>/libtdjni.so           - the TDLib JNI native library
+  * jniLibs/<abi>/libsslx.so            - OpenSSL libssl (renamed to avoid conflicts)
+  * jniLibs/<abi>/libcryptox.so         - OpenSSL libcrypto (renamed to avoid conflicts)
+
+for four ABIs: arm64-v8a, armeabi-v7a, x86, x86_64.
+
+Provenance
+----------
+The prebuilt artifacts are taken verbatim from the TGX-Android/tdlib project
+(the official Telegram X TDLib prebuilt distribution):
+
+  https://github.com/TGX-Android/tdlib
+  Pinned commit: 63524bd14bebb9d7f9f04a1747675501ec41ea0a
+
+Bump the mirror deliberately (re-copy the .so + TdApi.java/Client.java from a
+newer TGX-Android/tdlib commit, tag a new release, re-verify) rather than
+tracking upstream automatically, so builds stay reproducible.
+
+Licenses
+--------
+TDLib (libtdjni.so, TdApi.java, Client.java)
+  Copyright Aliaksei Levin, Arseny Smirnov and TDLib contributors.
+  Licensed under the Boost Software License, Version 1.0 - see LICENSE.
+  https://github.com/tdlib/td
+
+OpenSSL (libsslx.so, libcryptox.so)
+  Copyright The OpenSSL Project Authors. Licensed under the Apache License 2.0
+  (OpenSSL 3.x). https://www.openssl.org/source/license.html
+
+Android compatibility layer (org.drinkless.tdlib references androidx.annotation)
+  androidx.annotation - Apache License 2.0.

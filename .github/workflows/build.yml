@@ -1,0 +1,44 @@
+name: Build
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Assemble release AAR + publish to Maven local
+        run: ./gradlew assembleRelease publishToMavenLocal --no-daemon
+
+      - name: Assert the AAR ships libtdjni.so for all 4 ABIs
+        run: |
+          set -euo pipefail
+          AAR=$(find build/outputs/aar -name '*-release.aar' | head -1)
+          echo "AAR: $AAR"
+          for abi in arm64-v8a armeabi-v7a x86 x86_64; do
+            unzip -l "$AAR" | grep -q "jni/$abi/libtdjni.so" \
+              && echo "  ok  $abi/libtdjni.so" \
+              || { echo "  MISSING $abi/libtdjni.so"; exit 1; }
+          done
+          # sanity: the generated Java API compiled into the AAR
+          unzip -l "$AAR" | grep -q "classes.jar" && echo "  ok  classes.jar"
+
+      - name: Upload AAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: lib-tdlib-android-aar
+          path: build/outputs/aar/*.aar
