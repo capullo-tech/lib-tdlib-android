@@ -36,3 +36,15 @@ dependencies {
    `TGX-Android/tdlib` commit.
 2. Update the pinned commit in [`NOTICE`](NOTICE).
 3. Verify a consumer build packages `libtdjni.so`, then tag a new release.
+
+## License
+
+This repo redistributes prebuilt third-party binaries verbatim and adds no
+first-party code of its own:
+
+- **TDLib** (`libtdjni.so`, `TdApi.java`, `Client.java`) - Boost Software
+  License 1.0, see [`LICENSE`](LICENSE).
+- **OpenSSL** (`libsslx.so`, `libcryptox.so`) - Apache License 2.0.
+
+See [`NOTICE`](NOTICE) for full provenance (pinned upstream commit) and
+attribution.
