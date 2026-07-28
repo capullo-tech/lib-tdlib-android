@@ -13,8 +13,9 @@ android {
     namespace = "org.drinkless.tdlib"
     compileSdk = 36
     defaultConfig {
-        // 24 = TDLib prebuilt (TGX-Android) floor; the source lib + apps match it.
-        minSdk = 24
+        // 23: the prebuilt .so ELF notes show it was compiled at API 21 (64-bit) / 16 (32-bit);
+        // 23 matches the org-wide floor (snapcast/ffmpeg natives) so apps can target minSdk 23.
+        minSdk = 23
         consumerProguardFiles("consumer-rules.pro")
     }
     packaging {

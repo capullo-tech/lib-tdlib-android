@@ -27,7 +27,7 @@ dependencies {
 ```
 
 - `namespace` / package: `org.drinkless.tdlib`
-- `minSdk` 24 (the TGX-Android prebuilt floor), `compileSdk` 36
+- `minSdk` 23 (the .so ELF notes show it was compiled at API 21 (64-bit) / 16 (32-bit); 23 matches the org-wide floor), `compileSdk` 36
 - ABIs: `arm64-v8a`, `armeabi-v7a`, `x86`, `x86_64`
 
 ## Bumping the TDLib version
