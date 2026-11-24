@@ -37,6 +37,25 @@ jobs:
           # sanity: the generated Java API compiled into the AAR
           unzip -l "$AAR" | grep -q "classes.jar" && echo "  ok  classes.jar"
 
+      # libtdjni.so aborts at load ("Mismatched TdApi.java and tdjni shared library versions")
+      # unless it is the very TDLib commit TdApi.java was generated from. The emulator smoke
+      # runs of the apps are x86-only, so a stale ARM .so ships green and crashes every phone
+      # at launch: this is the only gate that sees all four ABIs.
+      - name: Assert every ABI's libtdjni.so is the TDLib build TdApi.java was generated from
+        run: |
+          set -euo pipefail
+          AAR=$(find build/outputs/aar -name '*-release.aar' | head -1)
+          HASH=$(sed -n 's/.*GIT_COMMIT_HASH = "\([0-9a-f]\{40\}\)".*/\1/p' src/main/java/org/drinkless/tdlib/TdApi.java)
+          test -n "$HASH" || { echo "no GIT_COMMIT_HASH in TdApi.java"; exit 1; }
+          echo "TdApi.java: TDLib $HASH"
+          for abi in arm64-v8a armeabi-v7a x86 x86_64; do
+            # grep -c, not -q: -q stops reading at the first match, unzip then dies of SIGPIPE
+            # and pipefail turns a found hash into a failure.
+            unzip -p "$AAR" "jni/$abi/libtdjni.so" | grep -ca "$HASH" >/dev/null \
+              && echo "  ok  $abi" \
+              || { echo "  MISMATCH $abi: libtdjni.so is another TDLib build"; exit 1; }
+          done
+
       - name: Upload AAR
         uses: actions/upload-artifact@v4
         with:
